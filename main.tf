@@ -73,7 +73,7 @@ resource "aws_autoscaling_group" "with_initial_lifecycle_hook" {
   count = "${var.create_asg_with_initial_lifecycle_hook}"
 
   name_prefix          = "${join("-", compact(list(coalesce(var.asg_name, var.name), var.recreate_asg_when_lc_changes ? element(concat(random_pet.asg_name.*.id, list("")), 0) : "")))}-"
-  launch_configuration = "${var.create_lc ? element(aws_launch_configuration.this.*.name, 0) : var.launch_configuration}"
+  launch_configuration = "${coalescelist(aws_launch_configuration.this.*.name, list(var.launch_configuration))}"
   vpc_zone_identifier  = ["${var.vpc_zone_identifier}"]
   max_size             = "${var.max_size}"
   min_size             = "${var.min_size}"
