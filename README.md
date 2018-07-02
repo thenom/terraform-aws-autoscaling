@@ -82,6 +82,19 @@ launch_configuration = "existing-launch-configuration"
 create_asg = false
 ```
 
+1. To create ASG with initial lifecycle hook
+```hcl
+create_asg = false
+create_asg_with_initial_lifecycle_hook = true
+
+initial_lifecycle_hook_name                  = "NameOfLifeCycleHook"
+initial_lifecycle_hook_transition            = "autoscaling:EC2_INSTANCE_TERMINATING"
+initial_lifecycle_hook_notification_metadata =<<EOF
+{
+  "foo": "bar"
+}
+EOF
+```
 1. To disable creation of both resources (LC and ASG) you can specify both arguments `create_lc = false` and `create_asg = false`. Sometimes you need to use this way to create resources in modules conditionally but Terraform does not allow to use `count` inside `module` block.
 
 ## Tags
@@ -102,6 +115,7 @@ There are two ways to specify tags for auto-scaling group in this module - `tags
 | asg_name | Creates a unique name for autoscaling group beginning with the specified prefix | string | `` | no |
 | associate_public_ip_address | Associate a public ip address with an instance in a VPC | string | `false` | no |
 | create_asg | Whether to create autoscaling group | string | `true` | no |
+| create_asg_with_initial_lifecycle_hook | Create an ASG with intial | string | `false` | no |
 | create_lc | Whether to create launch configuration | string | `true` | no |
 | default_cooldown | The amount of time, in seconds, after a scaling activity completes before another scaling activity can start | string | `300` | no |
 | desired_capacity | The number of Amazon EC2 instances that should be running in the group | string | - | yes |
@@ -115,6 +129,13 @@ There are two ways to specify tags for auto-scaling group in this module - `tags
 | health_check_type | Controls how health checking is done. Values are - EC2 and ELB | string | - | yes |
 | iam_instance_profile | The IAM instance profile to associate with launched instances | string | `` | no |
 | image_id | The EC2 image ID to launch | string | `` | no |
+| initial_lifecycle_hook_default_result | Defines the default action the autoscaler takes when the lifecyle hook timesout | string | `CONTINUE` | no |
+| initial_lifecycle_hook_heartbeat_time | Lifecyle action timer | string | `60` | no |
+| initial_lifecycle_hook_name | Initial lifecycle hook name required parameter | string | `` | no |
+| initial_lifecycle_hook_notification_metadata | Metadata for the lifecycle notification event | string | `` | no |
+| initial_lifecycle_hook_notification_target_arn | SNS target arn to allow notifications from autoscaling group | string | `` | no |
+| initial_lifecycle_hook_role_arn | AWS iam role to grant access to notification target | string | `` | no |
+| initial_lifecycle_hook_transition | Initial Lifecycle hook transtion type | string | `` | no |
 | instance_type | The size of instance to launch | string | `` | no |
 | key_name | The key name that should be used for the instance | string | `` | no |
 | launch_configuration | The name of the launch configuration to use (if it is created outside of this module) | string | `` | no |
